@@ -142,7 +142,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             else {
                 Audio.PlaySoundAtTransform("100Levels_ProgressFilled", transform);
                 Debug.LogFormat("[100 Levels of Defusal #{0}] Progress bar filled! Generating cipher...", moduleId);
-                GenerateCipher();
+                StartCoroutine(DelayGeneration());
             }
         }
     }
@@ -158,6 +158,12 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
         yield return new WaitForSeconds(0.25f);
         canFlashNext = true;
+    }
+
+    // Delays cipher generation
+    private IEnumerator DelayGeneration() {
+        yield return new WaitForSeconds(0.8f);
+        GenerateCipher();
     }
 
 
