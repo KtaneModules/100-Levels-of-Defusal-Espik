@@ -956,7 +956,10 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             Debug.LogFormat("[100 Levels of Defusal #{0}] Initiating Level {1}. Number of solves needed to unlock cipher: {2}", moduleId, level, solvesNeeded);
     }
 
-    //twitch plays
+
+    // Twitch Plays Support - Thanks to eXish
+
+
     #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} submit <ans> [Submits an answer of 'ans'] | Valid answers have only letters";
     #pragma warning restore 414
@@ -973,7 +976,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             }
             if (lockButtons)
             {
-                yield return "sendtochaterror An answer cannot be submitted while the letters are not white!";
+                yield return "sendtochaterror An answer cannot be submitted right now!";
                 yield break;
             }
             if (letterSlotsUsed != parameters[1].Length)
