@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KModkit;
+using System.Text.RegularExpressions;
 
 public class OneHundredLevelsOfDefusal : MonoBehaviour {
     public KMAudio Audio;
@@ -67,6 +68,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     // Logging info
     private static int moduleIdCounter = 1;
     private int moduleId;
+    private bool moduleSolved = false;
 
     // Ran as bomb loads
     private void Awake() {
@@ -135,6 +137,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
             if (levelFound == false) {
                 Debug.LogFormat("[100 Levels of Defusal #{0}] Module solved!", moduleId);
+                moduleSolved = true;
                 GetComponent<KMBombModule>().HandlePass();
                 Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, gameObject.transform);
             }
@@ -170,7 +173,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     // Letter is pressed
     private void LetterPressed(int index) {
         Letters[index].AddInteractionPunch(0.25f);
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonPress, gameObject.transform);
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonPress, Letters[index].transform);
 
         if (lockButtons == false)
             Increment(index);
@@ -199,14 +202,14 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     // Submit button pressed
     private void SubmitButtonPressed() {
         SubmitBtn.AddInteractionPunch(0.25f);
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, SubmitBtn.transform);
 
         if (lockButtons == false) {
             string str = "";
             for (int i = 0; i < letterSlotsUsed; i++)
                 str += LETTERS[letterIndexes[lettersUsed[i]]];
 
-            Debug.LogFormat("[100 Levels of Defusal #{0}] You subbmitted: {1}", moduleId, str);
+            Debug.LogFormat("[100 Levels of Defusal #{0}] You submitted: {1}", moduleId, str);
 
             // Turns the buttons off
             lockButtons = true;
@@ -228,6 +231,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
                 else {
                     Debug.LogFormat("[100 Levels of Defusal #{0}] Module solved!", moduleId);
+                    moduleSolved = true;
                     GetComponent<KMBombModule>().HandlePass();
                     Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, gameObject.transform);
                 }
@@ -245,7 +249,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     // Toggle button pressed
     private void ToggleButtonPressed() {
         ToggleBtn.AddInteractionPunch(0.25f);
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ToggleBtn.transform);
 
         if (lockButtons == false) {
             if (direction == true)
@@ -950,5 +954,114 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
         if (levelFound == true)
             Debug.LogFormat("[100 Levels of Defusal #{0}] Initiating Level {1}. Number of solves needed to unlock cipher: {2}", moduleId, level, solvesNeeded);
+    }
+
+    //twitch plays
+    #pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"!{0} submit <ans> [Submits an answer of 'ans'] | Valid answers have only letters";
+    #pragma warning restore 414
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+        string[] parameters = command.Split(' ');
+        if (Regex.IsMatch(parameters[0], @"^\s*submit\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            yield return null;
+            if (!solvesReached && levelFound)
+            {
+                yield return "sendtochaterror The module must unlock before an answer can be submitted!";
+                yield break;
+            }
+            if (lockButtons)
+            {
+                yield return "sendtochaterror An answer cannot be submitted while the letters are not white!";
+                yield break;
+            }
+            if (letterSlotsUsed != parameters[1].Length)
+            {
+                yield return "sendtochaterror An answer of length '" + parameters[1].Length + "' cannot be submitted!";
+                yield break;
+            }
+            for (int i = 0; i < parameters[1].Length; i++)
+            {
+                if (!LETTERS.Contains(parameters[1][i].ToString().ToUpper()))
+                {
+                    yield return "sendtochaterror The specified answer to submit '" + parameters[1] + "' is invalid!";
+                    yield break;
+                }
+            }
+            for (int i = 0; i < parameters[1].Length; i++)
+            {
+                int forct = 0;
+                int backct = 0;
+                int counter = letterIndexes[lettersUsed[i]];
+                while (counter != Array.IndexOf(LETTERS, parameters[1][i].ToString().ToUpper()))
+                {
+                    counter++;
+                    if (counter == 26)
+                        counter = 0;
+                    forct++;
+                }
+                counter = letterIndexes[lettersUsed[i]];
+                while (counter != Array.IndexOf(LETTERS, parameters[1][i].ToString().ToUpper()))
+                {
+                    counter--;
+                    if (counter == -1)
+                        counter = 25;
+                    backct++;
+                }
+                if (forct > backct)
+                {
+                    if (direction == true)
+                    {
+                        ToggleBtn.OnInteract();
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                    for (int j = 0; j < backct; j++)
+                    {
+                        Letters[lettersUsed[i]].OnInteract();
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                }
+                else if (forct < backct)
+                {
+                    if (direction == false)
+                    {
+                        ToggleBtn.OnInteract();
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                    for (int j = 0; j < forct; j++)
+                    {
+                        Letters[lettersUsed[i]].OnInteract();
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                }
+                else
+                {
+                    if (UnityEngine.Random.Range(0, 2) == 0)
+                    {
+                        ToggleBtn.OnInteract();
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                    for (int j = 0; j < forct; j++)
+                    {
+                        Letters[lettersUsed[i]].OnInteract();
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                }
+            }
+            SubmitBtn.OnInteract();
+            yield break;
+        }
+    }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        if (levelFound)
+        {
+            while (!solvesReached) { yield return true; yield return new WaitForSeconds(0.1f); }
+        }
+        while (lockButtons) { yield return true; yield return new WaitForSeconds(0.1f); }
+        yield return ProcessTwitchCommand("submit " + correctMessage);
+        while (!moduleSolved) { yield return true; yield return new WaitForSeconds(0.1f); }
     }
 }
