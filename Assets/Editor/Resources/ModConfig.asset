@@ -14,7 +14,7 @@ MonoBehaviour:
   id: 100LevelsOfDefusal
   title: 100 Levels of Defusal
   author: Espik
-  description: '100 Levels of Defusal v1.105
+  description: '100 Levels of Defusal v1.106
 
     Who said that one module couldn''t serve multiple purposes?
 
@@ -32,6 +32,6 @@ MonoBehaviour:
 
 
     Source Code: https://github.com/Espik/100-Levels-of-Defusal'
-  version: v1.105
+  version: v1.106
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 5da09541af6bd784390f95b1b63d7d90, type: 3}
