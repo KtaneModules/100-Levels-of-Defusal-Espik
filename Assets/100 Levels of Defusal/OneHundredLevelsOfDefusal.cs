@@ -984,7 +984,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     // Twitch Plays Support - Thanks to eXish
 
 
-#pragma warning disable 414
+    #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} submit <ans> [Submits an answer of 'ans'] | Valid answers have only letters";
     #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
@@ -1083,6 +1083,8 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
                 str += LETTERS[letterIndexes[lettersUsed[i]]];
 
             if (str == correctMessage) {
+                if (!levelFound)
+                    yield return "solve";
                 yield return "awardpointsonsolve " + Math.Floor((double) letterSlotsUsed * 1.5);
             }
 
