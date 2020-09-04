@@ -58,6 +58,8 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     private string correctMessage;
     private bool lockButtons = true;
 
+    private char[] displayedLetters = new char[12]; // Used for Souvenir
+
     private bool direction = true;
 
     private int moduleStrikes = 0;
@@ -416,16 +418,20 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
         // Generates the letters
         screenDisplay = "";
+        for (int i = 0; i < displayedLetters.Length; i++) {
+            displayedLetters[i] = '.';
+        }
+
         int[] availableLetters = { 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25 };
 
         for (int i = 0; i < letterSlotsUsed; i++) {
             letterIndexes[lettersUsed[i]] = availableLetters[UnityEngine.Random.Range(0, availableLetters.Length)];
             letterDisplays[lettersUsed[i]] = LETTERS[letterIndexes[lettersUsed[i]]];
             screenDisplay += LETTERS[letterIndexes[lettersUsed[i]]];
+            displayedLetters[i] = screenDisplay.ToCharArray()[i];
         }
 
         Debug.LogFormat("[100 Levels of Defusal #{0}] The cipher is {1} letters long, and the display is: {2}", moduleId, letterSlotsUsed, screenDisplay);
-
 
         // Turns the letters into the number
         int firstPairSum = 0;
