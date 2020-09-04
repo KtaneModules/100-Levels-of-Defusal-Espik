@@ -741,10 +741,8 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
         letterIndexes[6] = 18; letterIndexes[7] = 14; letterIndexes[8] = 11; letterIndexes[9] = 21; letterIndexes[10] = 4; letterIndexes[11] = 3;
 
-        for (int i = 0; i < letterSlotsUsed; i++) {
+        for (int i = 0; i < letterSlotsUsed; i++)
             letterDisplays[lettersUsed[i]] = LETTERS[letterIndexes[lettersUsed[i]]];
-            screenDisplay += LETTERS[letterIndexes[lettersUsed[i]]];
-        }
 
         StartCoroutine(ShowLetters(false));
     }
