@@ -1007,6 +1007,11 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
                 yield return "sendtochaterror An answer cannot be submitted right now!";
                 yield break;
             }
+            if (parameters.Length == 1)
+            {
+                yield return "sendtochaterror Please specify an answer to submit!";
+                yield break;
+            }
             if (letterSlotsUsed != parameters[1].Length)
             {
                 yield return "sendtochaterror An answer of length '" + parameters[1].Length + "' cannot be submitted!";
