@@ -38,7 +38,6 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
     private double solves = 0;
     private double solvesNeeded = 0;
-    private int moduleCount = 0;
 
     private int letters = 0;
     private bool levelFound = true;
