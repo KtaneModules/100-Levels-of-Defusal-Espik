@@ -58,6 +58,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     private bool lockButtons = true;
 
     private char[] displayedLetters = new char[12]; // Used for Souvenir
+    private char[] correctAnsArray;
 
     private bool direction = true;
 
@@ -229,7 +230,6 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             // Correct answer
             if (str == correctMessage) {
                 StartCoroutine(CorrectAnswer());
-                StartCoroutine(ShowSolveText());
 
                 if (solvesReached == false)
                     solves++;
@@ -520,6 +520,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             }
         }
 
+        correctAnsArray = correctMessage.ToCharArray();
         Debug.LogFormat("[100 Levels of Defusal #{0}] The answer to submit is: {1}", moduleId, correctMessage);
 
         // Starts the screen display
@@ -605,30 +606,74 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
         /* 0 = Do nothing
          * 1 = Disappear
          * 2 = Show correct letter
+         * 3 = Disappear + show "SOLVED"
+         * 4 = Show correct letter + disappear
+         * 5 = Disappear + Generate new cipher
+         * 6 = Unlock buttons
          */
 
         // Removes the letter
-        if (func == 1) {
+        if (func == 1 || func == 3 || func == 5) {
             letterIndexes[index] = 0;
             letterDisplays[index] = "A";
             Letters[index].gameObject.SetActive(false);
             LetterTexts[index].text = "";
             LetterButtons[index].enabled = false;
+
+            if (func == 3)
+                StartCoroutine(ShowSolveText());
+
+            if (func == 5) {
+                yield return new WaitForSeconds(0.5f);
+                Debug.LogFormat("[100 Levels of Defusal #{0}] Generating new cipher...", moduleId);
+                GenerateCipher();
+            }
         }
 
         // Shows the correct letter
-        else if (func == 2) {
+        else if (func == 2 || func == 4) {
             ColorText(2);
 
-            char[] correctAnsArray = correctMessage.ToCharArray();
-            for (int i = 0; i < letterSlotsUsed; i++)
-                LetterTexts[lettersUsed[i]].text = correctAnsArray[i].ToString();
+            for (int i = 0; i < letterSlotsUsed; i++) {
+                if (index == lettersUsed[i]) {
+                    letterDisplays[index] = correctAnsArray[i].ToString();
+                    LetterTexts[index].text = correctAnsArray[i].ToString();
+
+                    for (int j = 0; j < LETTERS.Length; j++) {
+                        if (letterDisplays[index] == LETTERS[j]) {
+                            letterIndexes[index] = j;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            if (func == 4) {
+                yield return new WaitForSeconds(4.0f);
+                for (int i = 0; i < letterSlotsUsed; i++) {
+                    if (i == 0)
+                        StartCoroutine(Obfuscate(lettersUsed[i], 1, true));
+
+                    else if (i == letterSlotsUsed - 1)
+                        StartCoroutine(Obfuscate(lettersUsed[i], 5, false));
+
+                    else
+                        StartCoroutine(Obfuscate(lettersUsed[i], 1, false));
+                }
+            }
         }
 
-        else if (func == 0) {
+        else {
             letterIndexes[index] = originalLetter;
             letterDisplays[index] = LETTERS[letterIndexes[index]];
             LetterTexts[index].text = letterDisplays[index];
+
+            if (func == 6) {
+                yield return new WaitForSeconds(0.5f);
+                StartCoroutine(UnlockButtons());
+            }
         }
     }
 
@@ -655,13 +700,14 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             LetterTexts[lettersUsed[i]].text = letterDisplays[lettersUsed[i]];
             Letters[lettersUsed[i]].gameObject.SetActive(true);
             LetterButtons[lettersUsed[i]].enabled = true;
-            StartCoroutine(Obfuscate(lettersUsed[i], 0, true));
-            yield return new WaitForSeconds(waitTime);
-        }
 
-        if (unlock == true) {
-            yield return new WaitForSeconds(1.5f);
-            StartCoroutine(UnlockButtons());
+            if (unlock == true && i == letterSlotsUsed - 1)
+                StartCoroutine(Obfuscate(lettersUsed[i], 6, true));
+
+            else
+                StartCoroutine(Obfuscate(lettersUsed[i], 0, true));
+
+            yield return new WaitForSeconds(waitTime);
         }
     }
 
@@ -699,6 +745,9 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             if (i == 0)
                 StartCoroutine(Obfuscate(lettersUsed[i], 1, true));
 
+            else if (i == letterSlotsUsed - 1)
+                StartCoroutine(Obfuscate(lettersUsed[i], 3, false));
+
             else
                 StartCoroutine(Obfuscate(lettersUsed[i], 1, false));
         }
@@ -712,22 +761,12 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             if (i == 0)
                 StartCoroutine(Obfuscate(lettersUsed[i], 2, true));
 
+            else if (i == letterSlotsUsed - 1)
+                StartCoroutine(Obfuscate(lettersUsed[i], 4, false));
+
             else
                 StartCoroutine(Obfuscate(lettersUsed[i], 2, false));
         }
-
-        yield return new WaitForSeconds(5.5f);
-        for (int i = 0; i < letterSlotsUsed; i++) {
-            if (i == 0)
-                StartCoroutine(Obfuscate(lettersUsed[i], 1, true));
-
-            else
-                StartCoroutine(Obfuscate(lettersUsed[i], 1, false));
-        }
-
-        yield return new WaitForSeconds(2.0f);
-        Debug.LogFormat("[100 Levels of Defusal #{0}] Generating new cipher...", moduleId);
-        GenerateCipher();
     }
 
     // Delayed generation
@@ -738,7 +777,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
     // Displays "SOLVED" on the screen
     private IEnumerator ShowSolveText() {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(0.5f);
         letterSlotsUsed = 6;
 
         lettersUsed[0] = 6; lettersUsed[1] = 7; lettersUsed[2] = 8; lettersUsed[3] = 9; lettersUsed[4] = 10; lettersUsed[5] = 11;
