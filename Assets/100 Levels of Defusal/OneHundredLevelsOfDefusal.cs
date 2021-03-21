@@ -68,6 +68,10 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     private readonly int FIXLETTERS = 6; // 6
     private readonly int FIXLEVEL = 15; // 15
 
+    // RNG Consistency
+    private bool firstGen = true;
+    private int[] firstLetters = new int[6];
+
     // Logging info
     private static int moduleIdCounter = 1;
     private int moduleId;
@@ -90,6 +94,10 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
     // Starts the module
     private void Start() {
+        // Creates a puzzle with consistent RNG
+        for (int i = 0; i < firstLetters.Length; i++)
+            firstLetters[i] = UnityEngine.Random.Range(0, 21);
+
         DisableAll();
         DetermineLevel();
     }
@@ -102,8 +110,6 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
         else
             StartCoroutine(LevelFound());
     }
-
-    
 
 
     // Disables all letters and selectables
@@ -367,6 +373,17 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
             letterSlotsUsed = 2;
 
 
+        // Determines if the pre-determined cipher will be used
+        bool useDefault = false;
+
+        if (firstGen && letterSlotsUsed == 6 && !levelFound) {
+            Debug.LogFormat("<100 Levels of Defusal #{0}> Spawning puzzle with consistent RNG.", moduleId);
+            useDefault = true;
+        }
+
+        firstGen = false;
+
+
         // Determines which slots are used
         switch (letterSlotsUsed) {
         case 3:
@@ -424,11 +441,18 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
         int[] availableLetters = { 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25 };
 
         for (int i = 0; i < letterSlotsUsed; i++) {
-            letterIndexes[lettersUsed[i]] = availableLetters[UnityEngine.Random.Range(0, availableLetters.Length)];
+            if (useDefault)
+                letterIndexes[lettersUsed[i]] = availableLetters[firstLetters[i]];
+
+            else
+                letterIndexes[lettersUsed[i]] = availableLetters[UnityEngine.Random.Range(0, availableLetters.Length)];
+
             letterDisplays[lettersUsed[i]] = LETTERS[letterIndexes[lettersUsed[i]]];
             screenDisplay += LETTERS[letterIndexes[lettersUsed[i]]];
             displayedLetters[i] = screenDisplay.ToCharArray()[i];
         }
+
+        useDefault = false;
 
         Debug.LogFormat("[100 Levels of Defusal #{0}] The cipher is {1} letters long, and the display is: {2}", moduleId, letterSlotsUsed, screenDisplay);
 
