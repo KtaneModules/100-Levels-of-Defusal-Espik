@@ -77,6 +77,19 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     private int moduleId;
     private bool moduleSolved = false;
 
+    // Used for the Dead End mission
+    private bool deadEnd = false;
+    private bool deadEndBomb = false;
+    private bool bombSolved = false;
+
+    private static bool deadEndSolve = false;
+    private readonly float STARTTIME = 12000.0f; // 12000
+    private readonly int HARDLETTERS = 9; // 9
+
+    private static float finishingTime = 55.0f;
+    private float iteration = 0.0f;
+
+
     // Ran as bomb loads
     private void Awake() {
         moduleId = moduleIdCounter++;
@@ -104,8 +117,15 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
     // Bomb lights turn on
     private void OnActivate() {
-        if (levelFound == false)
-            StartCoroutine(PendingText());
+        if (!levelFound) {
+            // Dead End
+            if (deadEnd && deadEndBomb) {
+                Debug.LogFormat("<100 Levels of Defusal #{0}> Dead End mission detected.", moduleId);
+            }
+
+            else
+                StartCoroutine(PendingText());
+        }
 
         else
             StartCoroutine(LevelFound());
@@ -133,7 +153,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
 
     // Tracking solve count
     private void Update() {
-        if (levelFound == true)
+        if (levelFound)
             solves = Bomb.GetSolvedModuleNames().Count();
 
         progress = solves / solvesNeeded * 100;
@@ -144,10 +164,10 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
         }
 
         // Progress bar fills
-        if (progressBars >= 10 && solvesReached == false) {
+        if (progressBars >= 10 && !solvesReached) {
             solvesReached = true;
 
-            if (levelFound == false) {
+            if (!levelFound) {
                 Debug.LogFormat("[100 Levels of Defusal #{0}] Module solved!", moduleId);
                 moduleSolved = true;
                 GetComponent<KMBombModule>().HandlePass();
@@ -158,6 +178,62 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
                 Audio.PlaySoundAtTransform("100Levels_ProgressFilled", transform);
                 Debug.LogFormat("[100 Levels of Defusal #{0}] Progress bar filled! Generating cipher...", moduleId);
                 StartCoroutine(DelayGeneration());
+            }
+        }
+
+
+        // Dead End mission
+        if (deadEnd) {
+            // Smaller bomb
+            if (deadEndBomb && !bombSolved) {
+                // Keeps the time between 55-56 seconds
+                if (ZenModeActive) {
+                    if (Bomb.GetTime() > 55.95f)
+                        TimeRemaining.FromModule(Module, 55.01f);
+                }
+
+                else {
+                    if (Bomb.GetTime() < 55.05f) {
+                        TimeRemaining.FromModule(Module, 55.99f);
+                    }
+                }
+
+                // Larger bomb is solved
+                if (deadEndSolve) {
+                    bombSolved = true;
+                    deadEndSolve = false;
+                }
+            }
+
+            // Larger bomb
+            else if (!bombSolved) {
+                // Increases the timer speed
+                if (ZenModeActive) {
+                    if (Mathf.Floor(Bomb.GetTime()) != iteration) {
+                        iteration = Mathf.Floor(Bomb.GetTime());
+
+                        // Prevents the timer from going too fast
+                        if (iteration >= 12000.0f)
+                            TimeRemaining.FromModule(Module, Bomb.GetTime() + 0.75f);
+
+                        else
+                            TimeRemaining.FromModule(Module, Bomb.GetTime() + (Mathf.Floor(iteration / 160.0f) / 100.0f));
+                    }
+                }
+
+                else {
+                    if (Mathf.Floor(Bomb.GetTime()) != STARTTIME - iteration) {
+                        iteration = STARTTIME - Mathf.Floor(Bomb.GetTime());
+                        TimeRemaining.FromModule(Module, Bomb.GetTime() - (Mathf.Floor(iteration / 160.0f) / 100.0f));
+                    }
+                }
+
+                // Bomb solves
+                if (Bomb.GetSolvedModuleNames().Count() == Bomb.GetSolvableModuleNames().Count()) {
+                    bombSolved = true;
+                    finishingTime = Bomb.GetTime();
+                    deadEndSolve = true;
+                }
             }
         }
     }
@@ -311,6 +387,34 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
         LevelText.text = "";
         yield return new WaitForSeconds(0.15f);
         LevelText.text = "LEVEL #??";
+    }
+
+    // Pending text (infinite)
+    private IEnumerator PendingTextInfinite() {
+        while (!bombSolved) {
+            LevelText.text = "PENDING.";
+            yield return new WaitForSeconds(0.4f);
+            LevelText.text = "PENDING..";
+            yield return new WaitForSeconds(0.4f);
+            LevelText.text = "PENDING...";
+            yield return new WaitForSeconds(0.4f);
+        }
+
+        // Smaller bomb is solved on Dead End
+        Audio.PlaySoundAtTransform("100Levels_LevelNotFound", transform);
+        yield return new WaitForSeconds(0.04f);
+        LevelText.text = "ERROR";
+        yield return new WaitForSeconds(0.25f);
+        LevelText.text = "";
+        yield return new WaitForSeconds(0.15f);
+        LevelText.text = "ERROR";
+        yield return new WaitForSeconds(0.25f);
+        LevelText.text = "";
+        yield return new WaitForSeconds(0.15f);
+        LevelText.text = "ERROR";
+        yield return new WaitForSeconds(0.25f);
+        TimeRemaining.FromModule(Module, finishingTime);
+        GetComponent<KMBombModule>().HandlePass();
     }
 
     // Level found
@@ -921,6 +1025,7 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
         case "mod_100LevelsOfDefusalMissions_level98": level = 98; break;
         case "mod_100LevelsOfDefusalMissions_level99": level = 99; break;
         case "mod_100LevelsOfDefusalMissions_level100": level = 100; break;
+        case "mod_dead_end_deadend": deadEnd = true; break;
         }
 
         // Determines the number of solves needed and the letters used in the cipher
@@ -1028,7 +1133,19 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
         default: solvesNeeded = 1; letters = FIXLETTERS; levelFound = false; break; // This doesn't actually require 1 solve
         }
 
-        if (levelFound == true)
+        // Dead End mission detected
+        if (deadEnd) {
+            if (Bomb.GetSolvableModuleNames().Count() == 1) {
+                deadEndBomb = true;
+                StartCoroutine(PendingTextInfinite());
+            }
+
+            solvesNeeded = 1;
+            letters = HARDLETTERS;
+            levelFound = false;
+        }
+
+        if (levelFound)
             Debug.LogFormat("[100 Levels of Defusal #{0}] Initiating Level {1}. Number of solves needed to unlock cipher: {2}", moduleId, level, solvesNeeded);
     }
 
@@ -1050,9 +1167,10 @@ public class OneHundredLevelsOfDefusal : MonoBehaviour {
     // Twitch Plays Support - Thanks to eXish
 
 
-    #pragma warning disable 414
+#pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} submit <ans> [Submits an answer of 'ans'] | Valid answers have only letters";
-    #pragma warning restore 414
+    private bool ZenModeActive;
+#pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
         string[] parameters = command.Split(' ');

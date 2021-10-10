@@ -4222,7 +4222,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 4cb8dede10a9d294b86b262b25738c37, type: 2}
+  - {fileID: 2100000, guid: 039c365b1e19f954ebf5f7bfbc115757, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5548,7 +5548,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 238903b7e354ddc44b27ab4af8989033, type: 2}
+  - {fileID: 2100000, guid: 1b3578207ec36444ba2a61e65de38725, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6058,7 +6058,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: eafb0e009d6df6545960afa9dc1903bb, type: 2}
+  - {fileID: 2100000, guid: f891e9afc72db4340af35a95b18cf1fd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6228,7 +6228,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: eafb0e009d6df6545960afa9dc1903bb, type: 2}
+  - {fileID: 2100000, guid: f891e9afc72db4340af35a95b18cf1fd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8276,7 +8276,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: 940e9a8a9c0d18b4ca7a75d32e98aa84, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4282449919
+    rgba: 4278233600
 --- !u!102 &102886399465677130
 TextMesh:
   serializedVersion: 3
@@ -9129,11 +9129,11 @@ MonoBehaviour:
   - {fileID: 2100000, guid: a4b2d2201a34d804ab1dbf16f3bc47c1, type: 2}
   TextColors:
   - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 1, g: 0.49803922, b: 0, a: 1}
-  - {r: 1, g: 1, b: 0, a: 1}
+  - {r: 0.5019608, g: 0, b: 0, a: 1}
+  - {r: 0.6666667, g: 0.33333334, b: 0, a: 1}
+  - {r: 0.33333334, g: 0.33333334, b: 1, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
-  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0.49803922, b: 1, a: 1}
   SubmitBtn: {fileID: 114440692693631528}
   SubmitText: {fileID: 102157768258424624}
   SubmitBtnModel: {fileID: 23942705370741800}

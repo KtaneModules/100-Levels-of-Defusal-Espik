@@ -1,0 +1,9 @@
+level screen text: FFFF40
+
+screen texts:
+[0]: FFFFFF
+[1]: FF0000
+[2]: FF7F00
+[3]: FFFF00
+[4]: 00FF00
+[5]: 00FFFF
