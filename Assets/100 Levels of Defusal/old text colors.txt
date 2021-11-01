@@ -1,9 +1,9 @@
-level screen text: FFFF40
+level screen text: FFFF40 / 00AA00
 
 screen texts:
-[0]: FFFFFF
-[1]: FF0000
-[2]: FF7F00
-[3]: FFFF00
-[4]: 00FF00
-[5]: 00FFFF
+[0]: FFFFFF / FFFFFF
+[1]: FF0000 / 800000
+[2]: FF7F00 / AA5500
+[3]: FFFF00 / 5555FF
+[4]: 00FF00 / 00FF00
+[5]: 00FFFF / FF7FFF

@@ -339,6 +339,71 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 23543247813441366, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 238903b7e354ddc44b27ab4af8989033, type: 2}
+    - target: {fileID: 23773540166417848, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: eafb0e009d6df6545960afa9dc1903bb, type: 2}
+    - target: {fileID: 23752309988640736, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: eafb0e009d6df6545960afa9dc1903bb, type: 2}
+    - target: {fileID: 23055160010874138, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4cb8dede10a9d294b86b262b25738c37, type: 2}
+    - target: {fileID: 102884603147770696, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: m_Color.rgba
+      value: 4282449919
+      objectReference: {fileID: 0}
+    - target: {fileID: 114234582227007208, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: TextColors.Array.data[1].r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114234582227007208, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: TextColors.Array.data[2].r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114234582227007208, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: TextColors.Array.data[2].g
+      value: 0.49803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 114234582227007208, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: TextColors.Array.data[3].r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114234582227007208, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: TextColors.Array.data[3].g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114234582227007208, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: TextColors.Array.data[3].b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114234582227007208, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: TextColors.Array.data[5].r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114234582227007208, guid: 5365d910d998cfb4394ab011944399cf,
+        type: 2}
+      propertyPath: TextColors.Array.data[5].g
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5365d910d998cfb4394ab011944399cf, type: 2}
   m_IsPrefabParent: 0
